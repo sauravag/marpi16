@@ -1,6 +1,6 @@
 clc; clear; close all;
 
-duration = 100; %secs
+duration = 1000; %secs
 dt = 0.1; %time step
 
 R = 1; %Pipe radius in meters
