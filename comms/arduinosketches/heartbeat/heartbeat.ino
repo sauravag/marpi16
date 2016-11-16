@@ -45,7 +45,7 @@ void loop()
     // save the last time you blinked the LED 
     previousMillis = currentMillis;   
  
-    XBee.write("robot 3 is alive."); // broadcast heartbeat 
+    XBee.write("robot 3 is alive.\n"); // broadcast heartbeat 
   }
     
   if (XBee.available())
