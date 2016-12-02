@@ -1,0 +1,28 @@
+\documentclass[]{article}
+
+\usepackage{amsfonts}
+\usepackage{amsmath,amssymb,mathrsfs}
+%opening
+\title{Pancake Robot Modeling}
+\author{Navigation Team}
+
+\begin{document}
+
+\maketitle
+
+\section{Unicycle Motion Model}
+
+We simulate a 2D ground robot, the kinematics of which are represented by a unicycle. Let $x_{k}$ and $ u_{k}$ represent the system state and  control input at time step $ k $ respectively.
+
+\begin{align}\label{eq:unicycle-motion-model}
+\!\!\!\!\!x_{k+1}& \!=\! f(x_k,u_k,w_k) \!=\!
+\left(\!
+\begin{array}{c}
+\mathsf{x}_{k}+(V_k + n_v)\delta t\cos\theta_k \\
+\mathsf{y}_{k}+(V_k + n_v)\delta t\sin\theta_k \\
+\mathsf{\theta}_{k}+(\omega_k + n_{\omega})\delta t
+\end{array}\!\right)\!,
+\end{align}
+where $ x_k = (\mathsf{x}_k, \mathsf{y}_k, \mathsf{\theta}_k)^T $ describes the robot state (position and yaw angle). $ u_k = (V_k,\omega_k)^T $ is the control vector consisting of linear velocity $ V_k $ and angular velocity $ \omega_k $. We denote the process noise vector by $ w_k=(n_v,n_{\omega})^T\sim\mathcal{N}(0,\mathbf{Q}_k) $ (zero-mean Gaussian noise with covariance $\mathbf{Q}_k$).
+
+\end{document}

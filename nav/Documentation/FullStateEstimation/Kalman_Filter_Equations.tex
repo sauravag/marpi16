@@ -103,12 +103,12 @@ We have the observation at time $t_k$ as
 			a_x \\
 			a_y \\
 			a_z \\
-			\theta_k 
+			\phi_k 
 		\end{bmatrix}
 		=
 	\begin{bmatrix}
 		\mathbf{R}^T_{bp}\mathbf{g} \\
-		\theta_k 
+		\phi_k 
 	\end{bmatrix},
 \end{equation}
 
@@ -139,10 +139,10 @@ Now we may define the observation as
 \begin{equation}
 	\mathbf{z}_k = 
 	\begin{bmatrix}
-	-g \sin(\theta_k) \sin(\phi_k) \\
-	g \sin(\theta_k) \cos(\phi_k) \\
-	g \cos(\theta_k) \\
-	\phi_k
+	-g \sin(\theta_k) \sin(\phi_k) + \nu_{k,a_x} \\
+	g \sin(\theta_k) \cos(\phi_k) + \nu_{k,a_y} \\
+	g \cos(\theta_k) + \nu_{k,a_z} \\
+	\phi_k + \nu_{k,\phi}
 	\end{bmatrix}.
 \end{equation}
 
