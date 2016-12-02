@@ -1,0 +1,48 @@
+classdef PancakeRobot < MotionModelBase
+    properties (Constant = true) % note that all properties must be constant, because we have a lot of copies of this object and it can take a lot of memory otherwise.
+        stDim = 3; % state dimension
+        ctDim = 2;  % control vector dimension
+        wDim = 2;   % Process noise (W) dimension      
+        zeroNoise = [0;0]; % zero noise vector
+    end
+    
+    properties
+        dt = 0.1; % delta_t for time discretization
+        Q_W = 0.0001*eye(2); % covariance of process noise
+        R = 1e-2*60.96/2; % radius of pipe in meters
+    end
+    
+    methods
+        
+        function obj = PancakeRobot()
+            obj@MotionModelBase();
+        end
+        
+        function x_next = evolve(obj, x, u, w)
+            
+            phi = x(1);
+            theta = x(2);
+            
+            delta_phi =  u(2)*obj.dt + w(2)*sqrt(obj.dt);
+            
+            delta_theta = u(1)*sin(phi)*obj.dt/obj.R +  w(1)*sin(phi)*sqrt(obj.dt)/obj.R;
+            
+            delta_d = u(1)*cos(phi)*o
+            
+            x_next = x + [delta_theta; delta_phi; delta_d];
+        end
+        
+        function F = getStateTransitionJacobian(obj, x, u, w)
+        
+        end
+                
+        function L = getProcessNoiseJacobian(obj, x, u, w) % noise Jacobian
+        
+        end
+                
+        function w = generateProcessNoise(obj, x, u) % simulate (generate) process noise based on the current poistion and controls
+        
+        end
+        
+    end
+end
