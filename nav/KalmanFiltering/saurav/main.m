@@ -79,12 +79,12 @@ legend('Pipe','Truth','Estimate')
 
 figure(2)
 subplot(3,1,1)
-plot((x(1,:)-x_est(1,:))*180/pi)
+plot(pi_to_pi(x(1,:)-x_est(1,:))*180/pi)
 title('Phi (degrees)');
 xlabel('Time Steps'); ylabel('Error');
 
 subplot(3,1,2)
-plot((x(2,:)-x_est(2,:))*180/pi)
+plot(pi_to_pi(x(2,:)-x_est(2,:))*180/pi)
 title('Theta (degrees)');
 xlabel('Time Steps'); ylabel('Error');
 

@@ -6,7 +6,7 @@ classdef GravityHeadingSensor < ObservationModelBase
     
     properties
         zeroNoise = zeros(4,1);
-        R_v = 1e-8*eye(4);
+        R_v = 1e-6*eye(4);
         accG = 9.8;
         g_pipe = [-9.8;0;0];
     end
@@ -48,7 +48,7 @@ classdef GravityHeadingSensor < ObservationModelBase
 
         function v = generateObservationNoise(obj,x)
             v = mvnrnd(obj.zeroNoise,obj.R_v);
-            v = 0*v';
+            v = v';
         end
         
         function innov = computeInnovation(obj,Xprd,Zg)

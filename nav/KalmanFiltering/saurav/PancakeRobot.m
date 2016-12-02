@@ -15,7 +15,7 @@ classdef PancakeRobot < MotionModelBase
         function obj = PancakeRobot()
             obj@MotionModelBase();
             obj.dt = 0.1; % delta_t for time discretization
-            obj.Q_w = diag([0.01^2, 0.001^2]); % covariance of process noise
+            obj.Q_w = diag([0.01^2, 0.01^2]); % covariance of process noise
         end
         
         function x_next = evolve(obj, x, u, w)
