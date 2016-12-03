@@ -1,0 +1,202 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{color}
+
+\newcommand{\cmt}[1]{\textcolor{red}{//TODO: #1}}
+
+
+\title{State Estimation for Pancake Robot: \\ \small{Derivation of Theta From Gravity, Robot Acceleration and $\phi$}}
+
+\author{Nicholas Hemstreet}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+\cmt{Fill it out}
+
+\section{Preliminaries}
+
+Let $x_k$ be the robot state at time $t_k$ defined as 
+
+\begin{equation}
+\mathbf{x}_k = 
+\begin{bmatrix}
+	\phi_k \\
+	\theta_k \\
+	d_k
+\end{bmatrix},
+\end{equation}
+
+where $\phi_k$ is the angle that body x-axis makes with the flow direction, $\theta_k$ is the circumferential position of the robot and $d_k$ is the linear displacement along the pipe. Let $u_k$ be the control input (what we are applying to the system, for our case the velocity and angular velocity of the robot) 
+
+\begin{equation}\label{eq:control-vector}
+\mathbf{u}_k = 
+\begin{bmatrix}
+	v_k \\
+	\omega_k
+\end{bmatrix}.
+\end{equation}  
+
+Let $w_k \sim \mathcal{N}(0, \mathbf{Q}_k)$ be the zero-mean Gaussian process noise such that 
+
+\begin{equation}\label{eq:control-noise}
+	\mathbf{w}_k = 
+	\begin{bmatrix}
+		n_{v_k} \\
+		n_{\omega_k} \\
+	\end{bmatrix}.
+\end{equation}
+
+Given the state, control and process noise, state transition function or motion model is defined as $f(x_k, u_k,w_k)$. \\
+
+We define the observation $z_k$, and observation model $h(x_k, \nu_k)$ such that $z_{k} = h(x_k, \nu_k)$ where $\nu_k \sim \mathcal{N}(0, \mathbf{R}_k)$ is zero-mean Gaussian observation noise. The robot belief at time $t_k$ is $b_k \sim \mathcal{N}(\hat{\mathbf{x}}^{+}_k, \mathbf{P}^{+}_k)$ where $\mathbf{x}^{+}_k$ is the robot state estimate at $t_k$ and $\mathbf{P}^{+}_k$ is the state error covariance.
+
+\section{Motion Model}\label{sec:motion-model}
+
+We can now define the state transition function or motion model $f(x_k, u_k,w_k)$ that takes $x_k$ (the state variable), a control input $u_k$ (what we are applying to the system, for our case the velocity and angular velocity of the robot) and $w_k$ (the noise in each of the elements) such that :
+
+\begin{equation}\label{eq:motion-model}
+\mathbf{f}(x_k,u_k,w_k) = 
+\begin{bmatrix}
+ 	\phi_k + \omega_k \Delta T + n_{\omega_k} \sqrt{\Delta T} \\
+ 	\theta_k + \frac{v_k  \sin(\phi_k)\Delta T}{R} + n_{v_k} \frac{\sin(\phi_k)\sqrt{\Delta T}}{R} \\
+ 	d_k + v_k\cos(\phi_k)\Delta T + n_{v_k} \cos(\phi_k)  \sqrt{\Delta T}
+\end{bmatrix}
+\end{equation} 
+
+With the motion model function defined we need to find the Jacobians so that we can build the Kalman Filter. \\
+
+We define the motion model jacobian w.r.t state as 
+
+\begin{equation}
+	\mathbf{F}_{k} = \bar{\nabla}_x\mathbf{f} = 
+	\begin{bmatrix}
+		1 & 0 & 0 \\
+		v_k \frac{\cos(\phi_k)}{R}\Delta T & 1 & 0 \\
+		-v_k\sin(\phi)\Delta T & 0 & 1\\
+	\end{bmatrix}
+\end{equation} 
+
+and w.r.t noise as 
+
+\begin{equation}
+\mathbf{L}_{k} = \bar{\nabla}_w\mathbf{f} = 
+\begin{bmatrix}
+	0 & \sqrt{\Delta T} \\
+	\frac{\sin(\phi_k) \sqrt{\Delta T}}{R} & 0 \\
+	\cos(\phi_k)\sqrt{\Delta T} & 0 \\
+\end{bmatrix}.	 
+\end{equation} 
+
+\section{Observation Model}\label{sec:obs-model}
+
+We have the observation at time $t_k$ as
+
+\begin{equation}
+	\mathbf{z}_k = 
+		\begin{bmatrix}
+			a_x \\
+			a_y \\
+			a_z \\
+			\phi_k 
+		\end{bmatrix}
+		=
+	\begin{bmatrix}
+		\mathbf{R}^T_{bp}\mathbf{g} \\
+		\phi_k 
+	\end{bmatrix},
+\end{equation}
+
+where $\mathbf{R}_{bp}$ is the rotation matrix from body frame to pipe frame and $\mathbf{g}$ is the gravity vector in pipe (inertial) frame. The gravity vector in pipe frame can be written out as
+
+\begin{equation}
+\mathbf{g} = 
+\begin{bmatrix}
+-g \\
+ 0\\
+ 0
+\end{bmatrix},
+\end{equation}
+
+and $\mathbf{R}_{bp}$ as
+
+\begin{equation}
+ R_{bp} = 
+ \begin{bmatrix}
+ \sin(\theta)\sin(\phi) & -\sin(\theta)\cos(\phi) & -\cos(\theta) \\
+ -\cos(\theta)\sin(\phi)& \cos(\theta)\cos(\phi)  & -\sin(\theta) \\
+ \cos(\phi)             & \sin(\phi)              & 0 \\
+ \end{bmatrix}.
+\end{equation}
+
+Now we may define the observation as
+
+\begin{equation}
+	\mathbf{z}_k = 
+	\begin{bmatrix}
+	-g \sin(\theta_k) \sin(\phi_k) + \nu_{k,a_x} \\
+	g \sin(\theta_k) \cos(\phi_k) + \nu_{k,a_y} \\
+	g \cos(\theta_k) + \nu_{k,a_z} \\
+	\phi_k + \nu_{k,\phi}
+	\end{bmatrix}.
+\end{equation}
+
+With the observation function defined we need to find the Jacobians so that we can build the Kalman Filter. \\
+
+The observation jacobian w.r.t state is 
+
+\begin{equation}
+	\mathbf{H}_k = \bar{\nabla}_x\mathbf{h} =
+	\begin{bmatrix}
+	-g \sin(\theta_k) \cos(\phi_k) & -g \cos(\theta_k) \sin(\phi_k) & 0 \\
+	-g \sin(\theta_k) \sin(\phi_k) & g \cos(\theta_k) \cos(\phi_k) & 0 \\
+	 0 & -g \sin(\theta_k) & 0 \\
+	 1 & 0 & 0
+	\end{bmatrix}
+\end{equation}
+
+The observation jacobian w.r.t noise is 
+
+\begin{equation}
+	\mathbf{M}_k = \bar{\nabla}_{\nu}\mathbf{h} = \mathbf{I}_{4 \times 4}
+\end{equation}
+
+where $ \mathbf{I}_{4 \times 4}$ is identity matrix of size $4 \times 4$.
+
+\section{Noise Covariance Matrices}
+
+At time $t_0$ the belief is  $b_k \sim \mathcal{N}(\hat{\mathbf{x}}^{+}_0, \mathbf{P}^{+}_0)$.
+
+\begin{equation}
+\mathbf{P}^{+}_0 =
+\begin{bmatrix}
+0.0001 & 0 & 0 \\
+0 & 0.0001 & 0 \\
+0 & 0 & 0.0001
+\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\mathbf{Q}_k =
+\begin{bmatrix}
+0.0001 & 0\\
+0 & 0.0001
+\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\mathbf{R}_k =
+\begin{bmatrix}
+0.0001 & 0 & 0 & 0\\
+0 & 0.0001 & 0 & 0\\
+0 & 0 & 0.0001 & 0\\
+0 & 0 & 0 & 0.0001 \\
+\end{bmatrix}
+\end{equation}
+
+\end{document}
