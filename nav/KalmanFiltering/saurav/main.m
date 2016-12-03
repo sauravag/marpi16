@@ -4,15 +4,15 @@ clc; clear; close all;
 rng(100)
 
 %% Setup
-duration = 50; %secs
+duration = 1000; %secs
 motionModel = PancakeRobot();
 observationModel = GravityHeadingSensor();
 
 x = zeros(3,duration/motionModel.dt); %initial state vector [theta, phi, z]
 x_est = x;
-P_est = 1e-2*eye(3);
+P_est = 1e-4*eye(3);
 
-u = [1.0; 0.01]; %control vector [v, phi]
+u = [1.0; 0.0]; %control vector [v, phi]
 
 %% run
 for t = 1: duration / motionModel.dt      
@@ -27,7 +27,7 @@ for t = 1: duration / motionModel.dt
     v = observationModel.generateObservationNoise(x);
     
     % sensor observation
-    z = observationModel.getObservation(x,v);
+    z = observationModel.getObservation(x(:,t+1),v);
     
     % Prediction Step
     
@@ -50,6 +50,16 @@ for t = 1: duration / motionModel.dt
     R = observationModel.R_v;
     M = observationModel.getObservationNoiseJacobian(x_prd);    
     S = H*P_prd*H' + M*R*M';
+    
+    % Check controllability and observability
+%     observability = [H;H*F;H*F*F];
+%     
+%     B =  motionModel.getControlJacobian(x(:,t), u);
+%     
+%     controllability = [B, F*B, F*F*B];
+%     
+%     rank(observability) % rank should be 3
+%     rank(controllability) % rank should be 3
     
     % Kalman Gain
     Kg = P_prd*H'*inv(S);

@@ -14,8 +14,8 @@ classdef PancakeRobot < MotionModelBase
         
         function obj = PancakeRobot()
             obj@MotionModelBase();
-            obj.dt = 0.1; % delta_t for time discretization
-            obj.Q_w = diag([0.01^2, 0.01^2]); % covariance of process noise
+            obj.dt = 0.2; % delta_t for time discretization
+            obj.Q_w = diag([0.01^2, 0.001^2]); % covariance of process noise
         end
         
         function x_next = evolve(obj, x, u, w)
@@ -45,6 +45,14 @@ classdef PancakeRobot < MotionModelBase
                     u(1)*cos(phi)*obj.dt/obj.R, 1, 0;...
                     -u(1)*sin(phi)*obj.dt, 0, 1];
                     
+        end
+        
+        function B = getControlJacobian(obj,x,u)
+            phi = x(1);
+            
+            B = [0 obj.dt;...
+                sin(phi)*obj.dt/obj.R, 0;...
+                cos(phi)*obj.dt, 0];
         end
                 
         function L = getProcessNoiseJacobian(obj, x) % noise Jacobian

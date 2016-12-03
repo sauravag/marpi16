@@ -6,7 +6,7 @@ classdef GravityHeadingSensor < ObservationModelBase
     
     properties
         zeroNoise = zeros(4,1);
-        R_v = 1e-6*eye(4);
+        R_v = 1e-1*eye(4);
         accG = 9.8;
         g_pipe = [-9.8;0;0];
     end

@@ -15,6 +15,8 @@ classdef MotionModelBase < handle
         x_next = evolve(x,u,w) % discrete motion model equation
         
         F = getStateTransitionJacobian(x,u) % state Jacobian
+        
+        B = getControlJacobian(x,u); % Jacobian w.r.t control u
                 
         L = getProcessNoiseJacobian(x) % noise Jacobian
                 
