@@ -12,7 +12,7 @@ x = zeros(3,duration/motionModel.dt); %initial state vector [theta, phi, z]
 x_est = x;
 P_est = 1e-4*eye(3);
 
-u = [1.0; 0.0]; %control vector [v, phi]
+u = [0.5; 0.0]; %control vector [v, phi]
 
 %% run
 for t = 1: duration / motionModel.dt      
@@ -76,7 +76,7 @@ R = motionModel.R;
 
 %Cylider to Model the Pipe
 [X,Y,Z] = cylinder(R,50);
-Z(2, :) = 100;
+Z(2, :) = 500;
 surf(X,Y,Z, 'FaceAlpha', 0.05, 'EdgeColor', 'none');
 
 plot3(R*cos(x(2,:)), R*sin(x(2,:)), x(3,:),'g') %True Path
